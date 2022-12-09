@@ -9,9 +9,9 @@
 namespace resourceHandler {
 	
 	const winapi::resourceType
-		classNameId = IDC_CPPWINAPIWINDOWSAMPLE,
-		iconId = IDI_CPPWINAPIWINDOWSAMPLE,
-		menuId = IDC_CPPWINAPIWINDOWSAMPLE,
+		classNameId = IDC_TROX,
+		iconId = IDI_TROX,
+		menuId = IDC_TROX,
 		windowAboutId = IDD_ABOUTBOX,
 		iconSmallId = IDI_SMALL,
 		titleId = IDS_APP_TITLE;

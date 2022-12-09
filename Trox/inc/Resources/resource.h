@@ -1,12 +1,12 @@
 ﻿#define IDC_MYICON                      2
-#define IDD_CPPWINAPIWINDOWSAMPLE_DIALOG 102
+#define IDD_TROX_DIALOG 102
 #define IDS_APP_TITLE                   103
 #define IDD_ABOUTBOX                    103
 #define IDM_ABOUT                       104
 #define IDM_EXIT                        105
-#define IDI_CPPWINAPIWINDOWSAMPLE   	107
+#define IDI_TROX   	107
 #define IDI_SMALL                       108
-#define IDC_CPPWINAPIWINDOWSAMPLE   	109
+#define IDC_TROX   	109
 #define IDR_MAINFRAME                   128
 #define ID_WINDOW_MAXMIN                32772
 #define IDC_STATIC                      -1

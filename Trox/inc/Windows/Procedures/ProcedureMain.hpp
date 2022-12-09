@@ -7,7 +7,10 @@
 
 namespace windows::mainWindow {
 	
-	winapi::windowHandle rightWindow, leftWindow;
+	
+	const Editor editor { 10, 10, 80, 20 };
+	const auto SC_DRAG = SC_SIZE + 9;
+	//winapi::rect previousWindowPosition;
 	
 	namespace event {
 
@@ -19,6 +22,53 @@ namespace windows::mainWindow {
 					darkmode::AllowDarkModeForWindow(mainWindow);
 					darkmode::RefreshTitleBarTheme(mainWindow);
 				}
+				
+			//MessageBoxExW(mainWindow, L"Main", L"Call", MB_YESNO, 0);
+				/// Creation of inner windows that have their own drawing system. 
+			windows::CreateEditor(mainProcess, mainWindow, editor);
+			
+			HWND button = CreateWindowW( 
+				L"BUTTON",  // Predefined class; Unicode assumed 
+				L"Ok",      // Button text 
+				WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles 
+				10,         // x position 
+				40,         // y position 
+				80,        // Button width
+				20,        // Button height
+				mainWindow,     // Parent window
+				NULL,       // No menu.
+				mainProcess,
+				NULL
+			);      // Pointer not needed.
+			
+				//registry::AddRegistryKey(window);
+				//registry::RemoveRegistryKey(window);
+				//windows::CreatePreviewWindow(mainProcess, mainWindow);
+				// Making window in window.... It's hard
+				// https://stackoverflow.com/questions/42734429/win32-c-child-window-is-not-visible
+				// 2 windowClass windowProperties;
+				// 2 windowProperties.cbSize = ( sizeof(windowClass) );
+				// 2 
+				// 2 windowProperties.style			= NULL; //
+				// 2 windowProperties.lpfnWndProc	= (windowProcedure)WindowOtherProcedure;
+				// 2 windowProperties.cbClsExtra		= 0;
+				// 2 windowProperties.cbWndExtra		= 0;
+				// 2 windowProperties.hInstance		= mainProcess;
+				// 2 windowProperties.hIcon			= nullptr;
+				// 2 windowProperties.hCursor		= nullptr;
+				// 2 windowProperties.hbrBackground	= themes::backgroundSecondary.Get();
+				// 2 windowProperties.lpszMenuName	= nullptr;
+				// 2 windowProperties.lpszClassName	= L"WindowClass2Name";
+				// 2 windowProperties.hIconSm		= nullptr;
+				// 2 
+				// 2 RegisterClassExW(&windowProperties);
+				// 2 
+				// 2 if (!CreateWindowExW(0, L"WindowClass2Name", L"Window2Name", WS_CHILD | WS_SIZEBOX | WS_CLIPSIBLINGS | WS_OVERLAPPEDWINDOW , 0, 0, 400, 300, window, nullptr, mainProcess, NULL))
+				// 2 	MessageBoxExW(window, L"Here", L"Oh yeah", MB_YESNO, 0);
+				// 2 
+				// 2 ShowWindow(window, SW_SHOW);
+				// 2 UpdateWindow(window);
+				
 			return proceeded::True;
 		}
 	
@@ -31,7 +81,8 @@ namespace windows::mainWindow {
 	
 		inline proceeded Paint(const winapi::windowHandle& window) {
 			if constexpr (DEBUG) debug::LogInfo("(CALL) Window-Main:Event-Paint");
-			const array<winapi::wchar, 10> sample { L"Type here" };
+			const array<winapi::wchar, 6> label1 { L"Texta" };
+			const array<winapi::wchar, 6> label2 { L"Textb" };
 			
 			winapi::windowDrawContext drawContext;
 			winapi::rect clientArea { 0 };
@@ -48,17 +99,41 @@ namespace windows::mainWindow {
 				
 				/// If we woudn't recreate some window/s with each draw we could use this
 				/// to simply make our background the default we wanted. SetBkColor wouldn't be needed then.
-				//FillRect(displayContext, &clientArea, brushes::backgroundPrimary.Get());
+				//FillRect(displayContext, &clientArea, brushes::primar.Get());
+				
+				/// For WindowEditor
+				windows::PaintBorder(displayContext, editor, 1);
+				
+				/// !
+				/// When we're drawing text using ExtTextOutW
+				///  we're using areas to draw at.
+				///  coordinates does not relate to textArea in any way!!!
+				/// it can be a nullptr. However if we do specify it and one
+				/// is on top of the other then the new one will be applied on the old one
+				/// ! ALSO those areas are corners positions so if one set to 400 other to 600 then we have 200 in size.
+				winapi::rect text1Area { 0, 0, 300, 300 };
+				winapi::rect text2Area { 300, 300, 600, 600 };
 				
 				/// Displing some text in a clientArea making the background color change.
 				ExtTextOutW (
 					displayContext,			/// on what we are drawing
-					0,						/// x coordinate
+					100,						/// x coordinate
 					0,						/// y coordinate
 					ETO_OPAQUE,				/// styles
-					&clientArea,			/// rect specyfing the window coordinates
-					sample.Pointer(),		/// string
-					sample.Length(),		/// string length
+					&text1Area,			/// rect specyfing the window coordinates
+					label1.Pointer(),		/// string
+					label1.Length(),		/// string length
+					nullptr					/// distance between letters
+				);
+				
+				ExtTextOutW (
+					displayContext,			/// on what we are drawing
+					300,						/// x coordinate
+					0,						/// y coordinate
+					ETO_OPAQUE,				/// styles
+					&text2Area,			/// rect specyfing the window coordinates
+					label2.Pointer(),		/// string
+					label2.Length(),		/// string length
 					nullptr					/// distance between letters
 				);
 				
@@ -115,36 +190,6 @@ namespace windows::mainWindow {
 			int clientY
 		) {
 			if constexpr (DEBUG) debug::LogInfo("(CALL) Window-Main:Event-Resize");
-			/// More about - https://devblogs.microsoft.com/oldnewthing/20050706-26/?p=35023
-			const uint64 windowsNumber ( 2 );
-			const uint64 clientXHalf ( clientX / 2 );
-			
-			winapi::multipleWindowHandle windows ( BeginDeferWindowPos(windowsNumber) );
-			
-			/// We don't have to scale both....
-			//if (windows) windows = DeferWindowPos (
-			//	windows, 
-			//	leftWindow,
-			//	nullptr, 
-			//	0, 
-			//	0, 
-			//	clientXHalf, 
-			//	clientY,
-			//	SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE
-			//);
-				
-			if (windows) windows = DeferWindowPos (
-				windows, 
-				rightWindow, 
-				nullptr, 
-				clientXHalf, 
-				0, 
-				clientX - clientXHalf, 
-				clientY,
-				SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE
-			);
-				
-			if (windows) EndDeferWindowPos(windows);
 			return proceeded::False;
 		}
 	
@@ -183,6 +228,13 @@ namespace windows::mainWindow {
 	
 					default: return (proceeded)event::Default(window, (uint32)message, wArgument, lArgument);
 				} break;
+			}
+			
+			case input::OnMouseLeftClickDown: {
+				//GetWindowRect(window, &previousWindowPosition);
+				/// To make the window dragable. 
+				PostMessage(window, WM_SYSCOMMAND, SC_DRAG, (LPARAM)NULL);
+				return proceeded::False;
 			}
 	
 			/// Clang questions enum values specified outside the used type... 

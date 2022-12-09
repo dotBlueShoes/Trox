@@ -18,13 +18,11 @@ namespace windows::mainWindow {
 	) {
 		using namespace resourceHandler;
 		
-		Register(
+		RegisterCustom(
 			process, 
 			className.Pointer(), 
 			(winapi::windowProcedure)WindowMainProcedure, 
 			iconId, 
-			iconSmallId, 
-			menuId, 
 			backgroundBrush
 		);
 		
@@ -34,7 +32,7 @@ namespace windows::mainWindow {
 			if constexpr (DEBUG) debug::LogInfo("(CALL) Window-Main:Create");
 				
 			const winapi::windowHandle window ( 
-				Initialize (
+				InitializeCustom (
 					process, 
 					className.Pointer(), 
 					title.Pointer(), 
@@ -47,19 +45,19 @@ namespace windows::mainWindow {
 			if constexpr (DEBUG) 
 				if (window == NULL) debug::LogError("Window not created!");
 		
-			leftWindow = windowLeft::Create(
-				mainProcess,
-				window,
-				brushes::primar.Get(),
-				windowState
-			);
-			
-			rightWindow = windowRight::Create(
-				mainProcess,
-				window,
-				brushes::second.Get(),
-				windowState
-			);
+			//leftWindow = windowLeft::Create(
+			//	mainProcess,
+			//	window,
+			//	brushes::primar.Get(),
+			//	windowState
+			//);
+			//
+			//rightWindow = windowRight::Create(
+			//	mainProcess,
+			//	window,
+			//	brushes::second.Get(),
+			//	windowState
+			//);
 			
 			return window;
 		}

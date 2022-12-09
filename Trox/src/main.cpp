@@ -11,6 +11,16 @@
 /// 3. add manifest (so the buttons appear right..)
 /// 4. run
 
+
+/// TODO:
+/// - get rid of top border and in other windows borders that are all around..
+/// - windows 10 blur background effect
+/// - get this logic implemented https://devblogs.microsoft.com/oldnewthing/20130909-00/?p=3293
+/// - get onButtonClick logic
+/// - keep the style https://i.redd.it/ec2syrbyzl0a1.png
+/// - console integration
+
+
 int32 stdcall wWinMain(
 	[in]	winapi::handleInstance process,	/// The process we're given to run our program.
 	[out]	winapi::handleInstance ignored,	/// Now has no meaing it's 0 always.

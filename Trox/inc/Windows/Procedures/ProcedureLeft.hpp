@@ -11,7 +11,7 @@ namespace windows::windowLeft {
 		switch (message) { 
 		
 			case input::Create: {
-				windows::CreateEditor(mainProcess, window);
+				//windows::CreateEditor(mainProcess, window);
 				return proceeded::True;
 			}
 			

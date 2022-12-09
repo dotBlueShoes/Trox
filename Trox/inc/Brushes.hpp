@@ -12,7 +12,7 @@ namespace brushes {
 		selected, 
 		border;
 		
-	// What have beed Initialized needs to be Destroyed!
+	/// What have beed Initialized needs to be Destroyed!
 	block Initialize() {
 		selected.Create(colors->selected);
 		hovered.Create(colors->hovered);
@@ -21,9 +21,9 @@ namespace brushes {
 		border.Create(colors->border);
 	}
 	
-	// Previously used palette if not needed is future use needs to be Destroyed.
-	//  Newly loaded one have to re-initialized and destroyed when 
-	//  we're done using these defined colors.
+	/// Previously used palette if not needed is future use needs to be Destroyed.
+	///  Newly loaded one have to re-initialized and destroyed when 
+	///  we're done using these defined colors.
 	block ChangePalette(const winapi::window::theme::palette<6>& newColors) { 
 		colors = &newColors; 
 	}
