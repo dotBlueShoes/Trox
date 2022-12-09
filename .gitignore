@@ -1,0 +1,11 @@
+# Environmental stuff.
+/build/
+
+# Personal stuff.
+.ninja/secret.ninja
+.obsidian/
+
+*.zip
+*.exe
+*.npp
+*.ninja_log

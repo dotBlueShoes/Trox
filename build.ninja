@@ -1,0 +1,114 @@
+# https://ninja-build.org/manual.html
+# https://clang.llvm.org/get_started.html
+# https://clang.llvm.org/docs/ClangCommandLineReference.html
+# https://clang.llvm.org/docs/UsersManual.html
+# https://npp-user-manual.org/docs/session/
+# https://ninja-build.org/manual.html#ref_rule_command
+# https://ninja-build.org/manual.html#ref_dependencies
+
+include .ninja\properties.ninja
+include .ninja\secret.ninja
+
+# NINJA
+
+builddir = $buildDir
+
+# Libraries
+
+mstIncludePath = $mstPath\inc
+
+# Compilation Arguments :
+
+linkerLibraries = -l "$winLibPath\kernel32" -l "$winLibPath\user32" -l "$winLibPath\gdi32" -l "$winLibPath\comdlg32" -l "$winLibPath\AdvAPI32"
+srcList = $projectName\src\main.cpp
+globalIncludePath = $projectName\inc
+cppStandard = -std=c++20
+errorLimit = 10
+
+debugPath = debug
+
+# Windows Terminal Arguments :
+
+tabColor = "#022"
+
+# RULES
+
+rule run_release 
+  command = "$projectPath\$buildDir\$projectTitle.exe"
+  
+rule run_debug 
+  command = "$projectPath\$buildDir\$debugPath\$projectTitle.exe"
+
+rule compile_release
+  command = clang++ $
+  -Wall $cppStandard $
+  -ferror-limit=$errorLimit $
+  -I $globalIncludePath -I $mstIncludePath $
+  $srcList $
+  -o "$projectPath\$buildDir\$projectTitle.exe" $
+  --define-macro SYSTEM_VERSION=$buildMachine $
+  --define-macro DEBUG=0 $
+  $linkerLibraries $
+  "$projectPath\$projectName\inc\resources\$projectName.res"
+  
+# https://releases.llvm.org/13.0.0/tools/clang/docs/ClangCommandLineReference.html#debug-information-generation - debug ref
+# https://clang.llvm.org/docs/ClangCommandLineReference.html#preprocessor-flags
+rule compile_debug
+  command = clang++ $
+  -Wall $cppStandard $
+  -ferror-limit=$errorLimit $
+  -I $globalIncludePath -I $mstIncludePath $
+  $srcList $
+  -o "$projectPath\$buildDir\$debugPath\$projectTitle.exe" $
+  --debug $
+  --define-macro SYSTEM_VERSION=$buildMachine $
+  --define-macro DEBUG=3 $
+  $linkerLibraries $
+  "$projectPath\$projectName\inc\resources\$projectName.res"
+
+rule clear
+  command = rm "$projectPath\$buildDir\$projectTitle.exe"
+  
+# Setups project path in .ninja/secret.ninja
+rule setup
+  command = cmd /c wt -w 1 $
+  --title $projectTitle $
+  --tabColor $tabColor $
+  $toolsPath --setup %cd%
+  
+rule refresh
+  command = cmd /c $toolsPath --refresh-npp $
+  $projectName.npp $
+  $projectPath\$projectName $mstPath
+  
+# https://docs.microsoft.com/en-us/cpp/build/understanding-manifest-generation-for-c-cpp-programs?view=msvc-170
+rule add_manifest
+  command = cmd /c "$mt -manifest $
+  "$projectPath\$projectName\$projectName.exe.manifest" $
+  -outputresource:"$projectPath\$buildDir\$projectTitle.exe"";1
+  
+# https://docs.microsoft.com/en-us/windows/win32/menurc/using-rc-the-rc-command-line-
+# https://digitalmars.com/ctg/ctgRC.html
+# https://stackoverflow.com/questions/4291526/how-do-i-link-a-rc-resource-file-when-compiling-a-win32-app-with-gcc-through
+# https://stackoverflow.com/questions/25160245/clang-linking-with-a-so-file
+  
+rule compile_resource
+  command = $rc -X $
+  -I "$winIncludePath\shared" $
+  -I "$winIncludePath\um" $
+  -R "$projectPath\$projectName\inc\resources\$projectName.rc" 
+  
+# BUILDS
+  
+build bld : compile_release
+build dbb : compile_debug
+build run : run_release
+build dbr : run_debug
+
+build rsh : refresh
+build cls : clear
+build stp : setup
+build crs : compile_resource
+build adm : add_manifest
+
+
