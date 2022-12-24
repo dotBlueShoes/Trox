@@ -37,7 +37,7 @@ namespace windows::windowRight {
 						", d: " 	+ ToString(newPosition.bottom)
 					);
 					
-					winapi::debug::console::LogInfo(message);
+					debug::LogInfo(message);
 				}
 				
 				return proceeded::True;

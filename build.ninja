@@ -19,7 +19,15 @@ mstIncludePath = $mstPath\inc
 
 # Compilation Arguments :
 
-linkerLibraries = -l "$winLibPath\kernel32" -l "$winLibPath\user32" -l "$winLibPath\gdi32" -l "$winLibPath\comdlg32" -l "$winLibPath\AdvAPI32"
+linkerLibraries = $
+  -l "$winLibPath\kernel32" $
+  -l "$winLibPath\user32" $
+  -l "$winLibPath\gdi32" $
+  -l "$winLibPath\comdlg32" $
+  -l "$winLibPath\AdvAPI32" $
+  -l "$winLibPath\Propsys" $
+  -l "$winLibPath\Shell32"
+  
 srcList = $projectName\src\main.cpp
 globalIncludePath = $projectName\inc
 cppStandard = -std=c++20

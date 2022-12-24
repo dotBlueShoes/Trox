@@ -82,7 +82,6 @@ namespace windows::mainWindow {
 		inline proceeded Paint(const winapi::windowHandle& window) {
 			if constexpr (DEBUG) debug::LogInfo("(CALL) Window-Main:Event-Paint");
 			const array<winapi::wchar, 6> label1 { L"Texta" };
-			const array<winapi::wchar, 6> label2 { L"Textb" };
 			
 			winapi::windowDrawContext drawContext;
 			winapi::rect clientArea { 0 };
@@ -99,7 +98,7 @@ namespace windows::mainWindow {
 				
 				/// If we woudn't recreate some window/s with each draw we could use this
 				/// to simply make our background the default we wanted. SetBkColor wouldn't be needed then.
-				//FillRect(displayContext, &clientArea, brushes::primar.Get());
+				FillRect(displayContext, &clientArea, brushes::primar.Get());
 				
 				/// For WindowEditor
 				windows::PaintBorder(displayContext, editor, 1);
@@ -111,8 +110,7 @@ namespace windows::mainWindow {
 				/// it can be a nullptr. However if we do specify it and one
 				/// is on top of the other then the new one will be applied on the old one
 				/// ! ALSO those areas are corners positions so if one set to 400 other to 600 then we have 200 in size.
-				winapi::rect text1Area { 0, 0, 300, 300 };
-				winapi::rect text2Area { 300, 300, 600, 600 };
+				//winapi::rect text1Area { 0, 0, 300, 300 };
 				
 				/// Displing some text in a clientArea making the background color change.
 				ExtTextOutW (
@@ -120,20 +118,9 @@ namespace windows::mainWindow {
 					100,						/// x coordinate
 					0,						/// y coordinate
 					ETO_OPAQUE,				/// styles
-					&text1Area,			/// rect specyfing the window coordinates
+					nullptr,			/// rect specyfing the window coordinates
 					label1.Pointer(),		/// string
 					label1.Length(),		/// string length
-					nullptr					/// distance between letters
-				);
-				
-				ExtTextOutW (
-					displayContext,			/// on what we are drawing
-					300,						/// x coordinate
-					0,						/// y coordinate
-					ETO_OPAQUE,				/// styles
-					&text2Area,			/// rect specyfing the window coordinates
-					label2.Pointer(),		/// string
-					label2.Length(),		/// string length
 					nullptr					/// distance between letters
 				);
 				
